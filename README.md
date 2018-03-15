@@ -4,7 +4,7 @@ This is a collection of different payment API's, this API supports Stripe, Tigo 
 </p>
 
 ## Releases <a name="releases"></a>
-
+Current version <b>v1.1</b>
 
 ## Features <a name="features"></a>
 * Small library
