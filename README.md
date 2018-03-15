@@ -4,7 +4,9 @@ This is a collection of different payment API's, this API supports Stripe, Tigo 
 </p>
 
 ## Releases <a name="releases"></a>
-Current version <b>v1.1</b>
+[![](https://jitpack.io/v/kileha3/FurahitechPayments.svg)](https://jitpack.io/#kileha3/FurahitechPayments)
+
+
 
 ## Features <a name="features"></a>
 * Small library
