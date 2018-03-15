@@ -111,7 +111,7 @@ public class PayCard extends AppCompatActivity implements FurahitechCardView,Dia
         paymentDescription.setText(request.getPaymentDesc());
         customerEmail.setText(request.getCustomerEmailAddress());
         totalAmount.setText(formatPrice(request.getTransactionAmount(),null));
-        String message="With "+formatPrice(request.getTransactionFee(),null)+" as processing fee";
+        String message=request.getTransactionFee()> 0 ? "With "+formatPrice(request.getTransactionFee(),null)+" as processing fee.":"With no hidden charges.";
         extraFee.setText(message);
         extraFee.setVisibility(request.getTransactionFee()!=-1 ? View.VISIBLE:View.GONE);
 

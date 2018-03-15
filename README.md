@@ -15,7 +15,7 @@ This is a collection of different payment API's, this API supports Stripe, Tigo 
 * Check payment status from the Tigo Secure page
 
 ## Installation <a name="installation"></a>
-This API depends on server side logic which help to log partial payments to a JSON file waiting for a callback from M-Pesa side and payment authorisation from Tigo Pesa side.
+This API depends on server side logic which helps to log partial payments to a JSON file waiting for a callback from M-Pesa servers and payment authorisation from Tigo Pesa servers.
 
 ### Server side installation
 
@@ -25,15 +25,21 @@ This API work with <a href="https://github.com/kileha3/PaymentGatewayAPIs-PHP">P
 * Submit your callback URL to WazoHub as:-
 
 ```html
- exampledomain.com/v1/callback
+ <exampledomain.com>/v1/callback
 ```
+
+Payment Request and payment status logging end-point format
+```html
+ <exampledomain.com>/
+```
+
 
 ### Client Side installation (Android)
 Add this to your dependencies (Check for the lastest release):
 ```groovy
 def versionNumber = "v1.0"
 
-compile "com.github.kileha3:FurahitechPay:$versionNumber"
+implementation "com.github.kileha3:FurahitechPayments:$versionNumber"
 ```
 
 Initialize payment request (Card Payment):
@@ -66,7 +72,7 @@ Initialize payment request (Card Payment):
  
 ```
 
-Initialize payment request (Mobile Payment - M-PESA and Tigo Pesa):
+Initialize payment request (Tigo Pesa):
 ```java
  PaymentRequest request=new PaymentRequest();
  
@@ -76,6 +82,35 @@ Initialize payment request (Mobile Payment - M-PESA and Tigo Pesa):
  request.setTigoMerchantPin("");
  request.setTigoMerchantNumber("");
  request.setTigoMerchantName("");
+ 
+ /*Customer details*/
+ request.setCustomerEmailAddress("");
+ request.setCustomerFirstName("");
+ request.setCustomerLastName("");
+ 
+ /*Transaction other details*/
+ request.setTransactionAmount(0);
+ request.setTransactionFee(0);
+ request.setPaymentDesc("Paying amount X for X reason");
+ 
+ /*HTTP request endPoints*/
+ request.setPaymentRequestEndPoint("");
+ 
+ /*Build request*/
+ FurahitechPay.getInstance()
+                 .with(this)
+                 .setPaymentRequest(request)
+                 .setPaymentEnvironment(SANDBOX)
+                 .setPaymentMode(MODE_MOBILE)
+                 .setSupportedGateway(GATEWAY_TIGOPESA)
+                 .setPaymentEnvironment(LIVE).request();
+ 
+```
+
+
+Initialize payment request (M-Pesa):
+```java
+ PaymentRequest request=new PaymentRequest();
  
  /*Merchant credentials - M-Pes*/
   request.setWazoHubClientID("");
@@ -96,14 +131,16 @@ Initialize payment request (Mobile Payment - M-PESA and Tigo Pesa):
  request.setPaymentLogsEndPoint("");
  
  /*Build request*/
-  FurahitechPay.getInstance()
-                  .with(this)
-                  .setPaymentRequest(request)
-                  .setPaymentMode(MODE_MOBILE)
-                  .setSupportedGateway(GATEWAY_MPESA,GATEWAY_TIGOPESA)
-                  .setPaymentEnvironment(LIVE).build();
+ FurahitechPay.getInstance()
+                 .with(this)
+                 .setPaymentRequest(request)
+                 .setPaymentEnvironment(SANDBOX)
+                 .setPaymentMode(MODE_MOBILE)
+                 .setSupportedGateway(GATEWAY_MPESA)
+                 .setPaymentEnvironment(LIVE).request();
  
 ```
+
 Payment request and log end-point configuration, write your site URL with added "/".It should be the exact location on your server where PaymentGatewayAPIs-PHP files were uploaded.
 ```html
  exampledomain.com/
@@ -113,7 +150,7 @@ Passing extra data to the Library for payment process, it might might be product
 ...
  /*Passing extra param*/
  HashMap<String,String> extras=new HashMap<>();
- extras.put("","");
+ extras.put("id_key","id_value");
  request.setPaymentExtraParam(extras);
 ```
 

@@ -59,7 +59,7 @@ public class ActivityExample extends AppCompatActivity {
 
         /*Passing extra param*/
         HashMap<String,String> extras=new HashMap<>();
-        extras.put("_id","XYZQ");
+        extras.put("id_key","id_value");
         request.setPaymentExtraParam(extras);
 
         FurahitechPay.getInstance()
@@ -68,7 +68,7 @@ public class ActivityExample extends AppCompatActivity {
                 .setPaymentEnvironment(SANDBOX)
                 .setPaymentMode(MODE_MOBILE)
                 .setSupportedGateway(GATEWAY_MPESA,GATEWAY_TIGOPESA)
-                .setPaymentEnvironment(LIVE).build();
+                .setPaymentEnvironment(LIVE).request();
     }
 
     @Override

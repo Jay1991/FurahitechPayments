@@ -239,77 +239,120 @@ public class FurahitechPay{
         }
     }
 
-    public Enum getPaymentMode(){
+    private Enum getPaymentMode(){
         return paymentMode;
     }
 
-
+    @Deprecated
+    public void build(){
+        request();
+    }
     /**
      * Building logic to decide what logic to be executed
      */
-    public void build(){
-        if(activity !=null){
-            if(paymentRequest!=null){
-                if(paymentEnvironment!=null && ((paymentEnvironment.equals(SANDBOX) && paymentEnvironment.toLowerCase().contains(SANDBOX.toLowerCase()))
-                        || (paymentEnvironment.equals(LIVE) && paymentEnvironment.toLowerCase().contains(LIVE.toLowerCase())))){
+    public void request(){
 
-                    if(paymentMode !=null){
-                        if(getPaymentRequest().getPaymentRequestEndPoint()!=null){
-                            if(getPaymentRequest().getCustomerEmailAddress()!=null && getPaymentRequest().getCustomerFirstName()!=null
-                                    && getPaymentRequest().getCustomerLastName()!=null){
+        boolean isValidAmount=getPaymentRequest().getTransactionAmount() > 0;
 
-                                if(getPaymentRequest().getTransactionAmount()>0){
-                                    Intent resultIntent;
-                                    if(paymentMode == MODE_MOBILE){
-                                        if(supportedGateway !=null && supportedGateway.length>0){
-                                            if(getPaymentRequest().getWazoHubClientID()!=null && getPaymentRequest().getWazoHubClientSecret()!=null){
+        boolean isValidRequestObject=getPaymentRequest()!=null;
 
-                                                if((Arrays.asList(supportedGateway).indexOf(GATEWAY_MPESA)!=-1 && getPaymentRequest().getPaymentLogsEndPoint()!=null) || Arrays.asList(supportedGateway).indexOf(GATEWAY_TIGOPESA)!=-1){
-                                                    resultIntent=new Intent(activity, PayMobile.class);
-                                                    logEvent(false,GATEWAY_NONE,"Mobile payment selected");
-                                                }else{
-                                                    throw new FurahitechException("Missing payment logging endpoint",new Throwable("Provide log en-point"));
-                                                }
-                                            }else{
-                                                throw new FurahitechException("Missing wazohub client details",new Throwable("Provide WazoHub client credentials"));
-                                            }
-                                        }else{
-                                            throw new FurahitechException("Missing supported payment list",new Throwable("Select payment methods you support i.e MNO_TIGOPESA , MNO_MPESA"));
-                                        }
-                                    }else{
-                                        if(getPaymentRequest().getCardMerchantKey()!=null && getPaymentRequest().getCardMerchantSecret()!=null){
-                                            resultIntent=new Intent(activity, PayCard.class);
-                                            logEvent(false,GATEWAY_NONE,"Card payment selected");
-                                        }else{
-                                            throw new FurahitechException("Card merchant details can't be null",new Throwable("Make sure you provide card merchant details"));
-                                        }
-                                    }
-                                    resultIntent.putExtra(PAYMENT_REDIRECTION_PARAM,getPaymentRequest());
-                                    activity.startActivityForResult(resultIntent, REQUEST_CODE_PAYMENT_STATUS);
-                                }else{
-                                    throw new FurahitechException("Total amount must be greater than zero",new Throwable("Make sure payable amount is greater than zero"));
-                                }
+        boolean isValidPaymentMode=getPaymentMode()!=null;
 
-                            }else{
-                                throw new FurahitechException("Missing customer details",new Throwable("Provide customer and payment details"));
-                            }
-                        }else{
-                            throw new FurahitechException("Missing HTTP payment base URL",new Throwable("Provide base URl for HTTP calls"));
-                        }
-                    }else{
-                        throw new FurahitechException("Missing payment mode",new Throwable("Provide payment mode"));
-                    }
+        boolean isValidActivity=activity!=null;
 
-                }else{
-                    throw new FurahitechException("URL provided is not sandbox URL",new Throwable("Provide correct sandbox URL"));
-                }
 
-            }else{
-                throw new FurahitechException("Missing payment request param",new Throwable("Provide payment request param"));
-            }
-        }else{
+        boolean isValidRequestEndPoint=getPaymentRequest().getPaymentRequestEndPoint()!=null && !getPaymentRequest().getPaymentRequestEndPoint().isEmpty();
+
+        boolean isMobileTransaction=paymentMode == MODE_MOBILE;
+
+        boolean isValidCard=!getPaymentRequest().getCardMerchantKey().isEmpty() && !getPaymentRequest().getCardMerchantSecret().isEmpty();
+
+        boolean isValidGateway=supportedGateway !=null && supportedGateway.length > 0 && ((Arrays.asList(supportedGateway).indexOf(GATEWAY_MPESA)!=-1
+                && !getPaymentRequest().getPaymentLogsEndPoint().isEmpty())
+                || Arrays.asList(supportedGateway).indexOf(GATEWAY_TIGOPESA)!=-1);
+
+        boolean isMpesaSelected=supportedGateway!=null && Arrays.asList(supportedGateway).indexOf(GATEWAY_MPESA)!=-1;
+
+        boolean isTigoPesaSelected=supportedGateway!=null && Arrays.asList(supportedGateway).indexOf(GATEWAY_TIGOPESA)!=-1;
+
+        boolean isValidMpesa=!getPaymentRequest().getWazoHubClientID().isEmpty() && !getPaymentRequest().getWazoHubClientSecret().isEmpty()
+                && !getPaymentRequest().getPaymentLogsEndPoint().isEmpty();
+
+
+        boolean isValidTigoPesa=!getPaymentRequest().getTigoMerchantKey().isEmpty() && !getPaymentRequest().getTigoMerchantName().isEmpty()
+                && !getPaymentRequest().getTigoMerchantNumber().isEmpty() && !getPaymentRequest().getTigoMerchantPin().isEmpty()
+                && !getPaymentRequest().getTigoMerchantSecret().isEmpty();
+
+        boolean isValidEnvironment=paymentEnvironment!=null && ((paymentEnvironment.equals(SANDBOX) && paymentEnvironment.toLowerCase().contains(SANDBOX.toLowerCase()))
+                || (paymentEnvironment.equals(LIVE) && paymentEnvironment.toLowerCase().contains(LIVE.toLowerCase())));
+
+        boolean isValidClientsDetails=!getPaymentRequest().getCustomerEmailAddress().isEmpty() && !getPaymentRequest().getCustomerFirstName().isEmpty()
+                && !getPaymentRequest().getCustomerLastName().isEmpty();
+
+        if(!isValidActivity){
             throw new FurahitechException("Missing application activity and ",new Throwable("Provide application activity"));
         }
 
+        if(!isValidPaymentMode){
+            throw new FurahitechException("Missing payment mode",new Throwable("Provide payment mode"));
+        }
+
+        if(!isValidRequestObject){
+            throw new FurahitechException("Missing payment request param",new Throwable("Provide payment request param"));
+        }
+
+        if (!isValidRequestEndPoint && isMpesaSelected){
+            throw new FurahitechException("Missing payment request HTTP base URL",new Throwable("Provide base URl for payment request HTTP calls"));
+        }
+        if(!isValidAmount){
+            throw new FurahitechException("Total amount must be greater than zero",new Throwable("Make sure payable amount is greater than zero"));
+        }
+
+        if(!isValidClientsDetails){
+            throw new FurahitechException("Missing customer details",new Throwable("Provide customer details required for transaction"));
+        }
+
+        if(!isValidEnvironment){
+            throw new FurahitechException("URL provided is not sandbox URL",new Throwable("Provide correct sandbox URL"));
+        }
+
+        if(!isValidGateway && isMobileTransaction && isValidMpesa){
+            throw new FurahitechException("Missing payment logging endpoint",new Throwable("Provide log en-point"));
+        }
+
+        if(!isValidMpesa && isMobileTransaction ){
+            throw new FurahitechException("Missing wazohub client details",new Throwable("Provide WazoHub client credentials or payment log end-point"));
+        }
+
+
+        if(!isValidTigoPesa && isMobileTransaction){
+            throw new FurahitechException("Missing tigopesa merchant details",new Throwable("Provide all tigo pesa merchant details"));
+        }
+
+        if(!isValidCard && !isMobileTransaction){
+            throw new FurahitechException("Card merchant details can't be null",new Throwable("Make sure you provide card merchant details"));
+        }
+
+        if(isValidMpesa && !isValidTigoPesa){
+            setCustomPhoneNumberHint("759000000");
+        }
+
+        if(isValidTigoPesa && !isValidMpesa){
+            setCustomPhoneNumberHint("712000000");
+        }
+
+        Intent resultIntent;
+        if(isMobileTransaction && ((isValidTigoPesa && isTigoPesaSelected) || (isValidMpesa && isMpesaSelected))){
+            resultIntent=new Intent(activity, PayMobile.class);
+            logEvent(false,GATEWAY_NONE,"Mobile payment selected");
+        }else{
+            resultIntent=new Intent(activity, PayCard.class);
+            logEvent(false,GATEWAY_NONE,"Card payment selected");
+        }
+
+
+        resultIntent.putExtra(PAYMENT_REDIRECTION_PARAM,getPaymentRequest());
+        activity.startActivityForResult(resultIntent, REQUEST_CODE_PAYMENT_STATUS);
     }
+
 }
