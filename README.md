@@ -13,7 +13,7 @@ This is a collection of different payment API's, this API supports Stripe, Tigo 
 * Supports Stripe,M-Pesa and Tigo Pesa payments
 * Select only supported mobile network operators on mobile payments
 * Automatically monitor for the callback on the server side (M-Pesa payments)
-* Oprate on both LIVE and SANBOX environments.
+* Operate on both LIVE and SANBOX environments.
 * Check payment status from the Tigo Secure page
 
 ## Installation <a name="installation"></a>
@@ -37,7 +37,7 @@ Payment Request and payment status logging end-point format
 
 
 ### Client Side installation (Android)
-Add this to your dependencies (Check for the lastest release):
+Add this to your dependencies (Check for the latest release):
 ```groovy
 def versionNumber = "v1.0"
 
@@ -166,7 +166,7 @@ In case you don't fully support all mobile payments just pass supported ones.
 For SANDBOX development environment
 ```java
 ...
-//use SANDBOX as paramter by default it is LIVE
+//use SANDBOX as parameter by default it is LIVE
 .setPaymentEnvironment(SANDBOX)
 ```
 
@@ -198,7 +198,7 @@ Sometimes you might want to add this to your AndroidManifest.xml to make API use
 * Do you know how to improve existing docs or code?
 * Have you found a bug?
 
-Feel free to fork this project and send pull request, your contribution will be highly appreciated.Be ready to discuss your code and design logcs
+Feel free to fork this project and send pull request, your contribution will be highly appreciated.Be ready to discuss your code and design logics
 
 ## License <a name="license"></a>
 
