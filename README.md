@@ -69,7 +69,7 @@ Initialize payment request (Card Payment):
                   .with(this)
                   .setPaymentRequest(request)
                   .setPaymentMode(MODE_CARD)
-                  .setPaymentEnvironment(LIVE).build();
+                  .setPaymentEnvironment(LIVE).request();
  
 ```
 
