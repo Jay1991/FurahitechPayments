@@ -39,9 +39,8 @@ Payment Request and payment status logging end-point format
 ### Client Side installation (Android)
 Add this to your dependencies (Check for the latest release):
 ```groovy
-def versionNumber = "v1.0"
 
-implementation "com.github.kileha3:FurahitechPayments:$versionNumber"
+implementation "com.github.kileha3:FurahitechPayments:<Version Number>"
 ```
 
 Initialize payment request (Card Payment):
