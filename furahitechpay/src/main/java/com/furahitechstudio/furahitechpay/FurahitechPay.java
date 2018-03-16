@@ -252,7 +252,7 @@ public class FurahitechPay{
      */
     public void request(){
 
-        boolean isValidAmount=getPaymentRequest().getTransactionAmount() > 0;
+        boolean isValidAmount=getPaymentRequest()!=null && getPaymentRequest().getTransactionAmount() > 0;
 
         boolean isValidRequestObject=getPaymentRequest()!=null;
 
@@ -261,13 +261,17 @@ public class FurahitechPay{
         boolean isValidActivity=activity!=null;
 
 
-        boolean isValidRequestEndPoint=getPaymentRequest().getPaymentRequestEndPoint()!=null && !getPaymentRequest().getPaymentRequestEndPoint().isEmpty();
+        boolean isValidRequestEndPoint=getPaymentRequest()!=null && getPaymentRequest().getPaymentRequestEndPoint()!=null
+                && !getPaymentRequest().getPaymentRequestEndPoint().isEmpty();
 
         boolean isMobileTransaction=paymentMode == MODE_MOBILE;
 
-        boolean isValidCard=!getPaymentRequest().getCardMerchantKey().isEmpty() && !getPaymentRequest().getCardMerchantSecret().isEmpty();
+        boolean isValidCard=getPaymentRequest()!=null && getPaymentRequest().getCardMerchantKey()!=null
+                && !getPaymentRequest().getCardMerchantKey().isEmpty() && getPaymentRequest().getCardMerchantSecret()!=null
+                && !getPaymentRequest().getCardMerchantSecret().isEmpty();
 
-        boolean isValidGateway=supportedGateway !=null && supportedGateway.length > 0 && ((Arrays.asList(supportedGateway).indexOf(GATEWAY_MPESA)!=-1
+        boolean isValidGateway=supportedGateway !=null && getPaymentRequest()!=null && supportedGateway.length > 0
+                && ((Arrays.asList(supportedGateway).indexOf(GATEWAY_MPESA)!=-1
                 && !getPaymentRequest().getPaymentLogsEndPoint().isEmpty())
                 || Arrays.asList(supportedGateway).indexOf(GATEWAY_TIGOPESA)!=-1);
 
@@ -275,18 +279,23 @@ public class FurahitechPay{
 
         boolean isTigoPesaSelected=supportedGateway!=null && Arrays.asList(supportedGateway).indexOf(GATEWAY_TIGOPESA)!=-1;
 
-        boolean isValidMpesa=!getPaymentRequest().getWazoHubClientID().isEmpty() && !getPaymentRequest().getWazoHubClientSecret().isEmpty()
-                && !getPaymentRequest().getPaymentLogsEndPoint().isEmpty();
+        boolean isValidMpesa=getPaymentRequest()!=null && getPaymentRequest().getWazoHubClientID()!=null && !getPaymentRequest().getWazoHubClientID().isEmpty()
+                && getPaymentRequest().getWazoHubClientSecret()!=null && !getPaymentRequest().getWazoHubClientSecret().isEmpty()
+                && getPaymentRequest().getPaymentLogsEndPoint()!=null && !getPaymentRequest().getPaymentLogsEndPoint().isEmpty();
 
 
-        boolean isValidTigoPesa=!getPaymentRequest().getTigoMerchantKey().isEmpty() && !getPaymentRequest().getTigoMerchantName().isEmpty()
-                && !getPaymentRequest().getTigoMerchantNumber().isEmpty() && !getPaymentRequest().getTigoMerchantPin().isEmpty()
-                && !getPaymentRequest().getTigoMerchantSecret().isEmpty();
+        boolean isValidTigoPesa=getPaymentRequest()!=null && getPaymentRequest().getTigoMerchantKey()!=null && !getPaymentRequest().getTigoMerchantKey().isEmpty()
+                && getPaymentRequest().getTigoMerchantName()!=null && !getPaymentRequest().getTigoMerchantName().isEmpty()
+                && getPaymentRequest().getTigoMerchantNumber()!=null && !getPaymentRequest().getTigoMerchantNumber().isEmpty()
+                && getPaymentRequest().getTigoMerchantPin()!=null && !getPaymentRequest().getTigoMerchantPin().isEmpty()
+                && getPaymentRequest().getTigoMerchantSecret()!=null && !getPaymentRequest().getTigoMerchantSecret().isEmpty();
 
         boolean isValidEnvironment=paymentEnvironment!=null && ((paymentEnvironment.equals(SANDBOX) && paymentEnvironment.toLowerCase().contains(SANDBOX.toLowerCase()))
                 || (paymentEnvironment.equals(LIVE) && paymentEnvironment.toLowerCase().contains(LIVE.toLowerCase())));
 
-        boolean isValidClientsDetails=!getPaymentRequest().getCustomerEmailAddress().isEmpty() && !getPaymentRequest().getCustomerFirstName().isEmpty()
+        boolean isValidClientsDetails=getPaymentRequest()!=null && getPaymentRequest().getCustomerEmailAddress()!=null
+                && !getPaymentRequest().getCustomerEmailAddress().isEmpty() && getPaymentRequest().getCustomerFirstName()!=null
+                &&!getPaymentRequest().getCustomerFirstName().isEmpty() && getPaymentRequest().getCustomerLastName()!=null
                 && !getPaymentRequest().getCustomerLastName().isEmpty();
 
         if(!isValidActivity){
