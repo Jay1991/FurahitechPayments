@@ -44,7 +44,7 @@ public class ActivityExample extends AppCompatActivity {
         request.setCardMerchantSecret("");
 
        /*Customer details*/
-        request.setCustomerEmailAddress("");
+        request.setCustomerEmailAddress("info@furahitech.co.tz");
         request.setCustomerFirstName("Furahitech");
         request.setCustomerLastName("Studio");
 

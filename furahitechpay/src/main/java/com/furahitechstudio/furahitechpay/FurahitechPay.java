@@ -2,6 +2,7 @@ package com.furahitechstudio.furahitechpay;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -32,6 +33,7 @@ import static com.furahitechstudio.furahitechpay.utils.Furahitech.PaymentConstan
 import static com.furahitechstudio.furahitechpay.utils.Furahitech.PaymentConstant.MODE_MOBILE;
 import static com.furahitechstudio.furahitechpay.utils.Furahitech.PaymentEnvironment.LIVE;
 import static com.furahitechstudio.furahitechpay.utils.Furahitech.PaymentEnvironment.SANDBOX;
+import static com.furahitechstudio.furahitechpay.utils.FurahitechUtils.isConnected;
 import static com.furahitechstudio.furahitechpay.utils.FurahitechUtils.logEvent;
 
 /*
@@ -80,15 +82,9 @@ public class FurahitechPay{
     /**
      * Creating schedules for periodic callback status change
      */
-    private Handler mHandler=new Handler();
-    private Runnable mRunnable=new Runnable() {
-        @Override
-        public void run() {
-            Furahitech.currentRetryCount++;
-            checkCallbackStatus(activity,currentGateway,transactionUUID,callBackListener);
-            mHandler.postDelayed(mRunnable, TimeUnit.SECONDS.toMillis(CALLBACK_CHECK_INTERVAL));
-        }
-    };
+    private static Handler mHandler;
+
+    private static Runnable mRunnable;
 
 
 
@@ -117,14 +113,20 @@ public class FurahitechPay{
 
     /**
      * Scheduling periodic callback status check from the server
+     * @param mContext Application context
      * @param gateway Currently selected Gateway
      * @param UUID Currently created UUID
      * @param listener Status check listener
      */
-    public void startCallBackCheckTask(Enum gateway, String UUID, CallBackListener listener){
+    public static void startCallBackCheckTask(Context mContext,Enum gateway, String UUID, CallBackListener listener){
         currentGateway=gateway;
         transactionUUID=UUID;
         callBackListener=listener;
+        mHandler=new Handler();
+        if(mRunnable!=null){
+            cancelCallBackCheckTask();
+        }
+        mRunnable=new PaymentRunnable(mContext);
         mRunnable.run();
     }
 
@@ -132,9 +134,9 @@ public class FurahitechPay{
     /**
      * Cancel periodic callback status check task
      */
-    public void cancelCallBackCheckTask(){
+    public static void cancelCallBackCheckTask(){
         if(mHandler!=null && mRunnable!=null){
-            mHandler.removeCallbacks(mRunnable);
+            mHandler.removeCallbacksAndMessages(null);
         }
     }
 
@@ -329,12 +331,12 @@ public class FurahitechPay{
             throw new FurahitechException("Missing payment logging endpoint",new Throwable("Provide log en-point"));
         }
 
-        if(!isValidMpesa && isMobileTransaction ){
+        if(!isValidMpesa && isMobileTransaction && isMpesaSelected){
             throw new FurahitechException("Missing wazohub client details",new Throwable("Provide WazoHub client credentials or payment log end-point"));
         }
 
 
-        if(!isValidTigoPesa && isMobileTransaction){
+        if(!isValidTigoPesa && isMobileTransaction && isTigoPesaSelected){
             throw new FurahitechException("Missing tigopesa merchant details",new Throwable("Provide all tigo pesa merchant details"));
         }
 
@@ -362,6 +364,22 @@ public class FurahitechPay{
 
         resultIntent.putExtra(PAYMENT_REDIRECTION_PARAM,getPaymentRequest());
         activity.startActivityForResult(resultIntent, REQUEST_CODE_PAYMENT_STATUS);
+    }
+
+    /**
+     * Class to handle payment status checking
+     */
+    private static class PaymentRunnable implements Runnable {
+        private Context mContext;
+        PaymentRunnable(Context mContext){
+            this.mContext=mContext;
+        }
+        @Override
+        public void run() {
+            Furahitech.currentRetryCount++;
+            checkCallbackStatus(mContext,currentGateway,transactionUUID,callBackListener);
+            mHandler.postDelayed(mRunnable, TimeUnit.SECONDS.toMillis(CALLBACK_CHECK_INTERVAL));
+        }
     }
 
 }

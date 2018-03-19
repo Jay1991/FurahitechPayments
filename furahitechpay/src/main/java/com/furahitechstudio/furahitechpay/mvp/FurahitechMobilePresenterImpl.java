@@ -22,6 +22,8 @@ import com.furahitechstudio.furahitechpay.utils.Furahitech;
 import java.util.Date;
 import java.util.HashMap;
 
+import static com.furahitechstudio.furahitechpay.FurahitechPay.cancelCallBackCheckTask;
+import static com.furahitechstudio.furahitechpay.FurahitechPay.startCallBackCheckTask;
 import static com.furahitechstudio.furahitechpay.networks.FurahitechNetworkCall.initiateWazoHubPayments;
 import static com.furahitechstudio.furahitechpay.networks.FurahitechNetworkCall.logPartialPaymentForCallback;
 import static com.furahitechstudio.furahitechpay.networks.FurahitechNetworkCall.payWithTigoPesa;
@@ -265,7 +267,7 @@ public class FurahitechMobilePresenterImpl implements RedirectionListener,Furahi
        if(mobileView!=null){
            final String message="Checking status from "+selectedMNO+", processing..."+((currentRetryCount)*25)+"%";
            mobileView.showSnackView(message,true);
-           FurahitechPay.getInstance().startCallBackCheckTask(currentGateWay,currentUID,paymentCallBackListener);
+           startCallBackCheckTask(activity,currentGateWay,currentUID,paymentCallBackListener);
        }
     }
 
@@ -351,7 +353,7 @@ public class FurahitechMobilePresenterImpl implements RedirectionListener,Furahi
             if(mobileView!=null){
                 //Check if callback was received and proceed with transaction status reporting
                 if(partialCheck.getCallback().toLowerCase().equals(STATE_RECEIVED.toLowerCase()) && isExecuting()){
-                    FurahitechPay.getInstance().cancelCallBackCheckTask();
+                    cancelCallBackCheckTask();
                     mobileView.showSnackView(activity.getString(R.string.payment_message_completed),false);
                     PaymentRequest request=FurahitechPay.getInstance().getPaymentRequest();
                     PaymentStatus status=new PaymentStatus();
@@ -368,7 +370,6 @@ public class FurahitechMobilePresenterImpl implements RedirectionListener,Furahi
                 }else{
                     final String message="Checking status from "+selectedMNO+", processing..."+((currentRetryCount)*25)+"%";
                     if(currentRetryCount > CALLBACK_CHECK_MAX_RETRY_COUNT && isExecuting()){
-                        FurahitechPay.getInstance().cancelCallBackCheckTask();
                         logEvent(false,currentGateWay,"Terminate process after time-out");
                         partialCheck.setCallbackTimestamp(String.valueOf(new Date().getTime()/1000));
                         partialCheck.setRefuid(currentUID);

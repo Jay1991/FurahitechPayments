@@ -1,15 +1,19 @@
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+
 
 # IntelliJ
-/*.iml
 *.iml
+.idea/workspace.xml
+.idea/gradle.xml
+.idea/libraries
 
-# Android Studio generated #
-*/build/
-.gradle
-/local.properties
-/.idea/misc.xml
-/.idea/workspace.xml
-/.idea/libraries
-/build
-/captures
-.externalNativeBuild
+
+
+# Freeline
+.idea/misc.xml
