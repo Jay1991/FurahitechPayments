@@ -40,6 +40,7 @@ import java.util.HashMap;
 
 import br.com.sapereaude.maskedEditText.MaskedEditText;
 
+import static com.furahitechstudio.furahitechpay.FurahitechPay.cancelCallBackCheckTask;
 import static com.furahitechstudio.furahitechpay.utils.Furahitech.PaymentConstant.GATEWAY_MPESA;
 import static com.furahitechstudio.furahitechpay.utils.Furahitech.PaymentConstant.GATEWAY_NONE;
 import static com.furahitechstudio.furahitechpay.utils.Furahitech.PaymentConstant.GATEWAY_TIGOPESA;
@@ -270,7 +271,8 @@ public class PayMobile extends AppCompatActivity implements FurahitechMobileView
     @Override
     protected void onDestroy() {
         presenter.onDestroy();
-        FurahitechPay.getInstance().cancelCallBackCheckTask();
+        Furahitech.currentRetryCount=0;
+        cancelCallBackCheckTask();
         super.onDestroy();
     }
 

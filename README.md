@@ -21,8 +21,8 @@ This API depends on server side logic which helps to log partial payments to a J
 
 ### Server side installation
 
-This API work with <a href="https://github.com/kileha3/PaymentGatewayAPIs-PHP">PaymentGatewayAPIs-PHP</a>, what you have to do is:-<br/>
-* Clone PaymentGatewayAPIs-PHP from <a href="https://github.com/kileha3/PaymentGatewayAPIs-PHP">here</a>
+This API work with FurahitechPayments-Server repo, what you have to do is:-<br/>
+* Clone FurahitechPayments-Server repository from <a href="https://github.com/kileha3/FurahitechPayments-Server">here</a>
 * Upload it to your hosting service
 * Submit your callback URL to WazoHub as:-
 

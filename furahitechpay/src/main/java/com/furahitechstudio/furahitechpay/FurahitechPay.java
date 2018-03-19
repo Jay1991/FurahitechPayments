@@ -136,6 +136,7 @@ public class FurahitechPay{
      */
     public static void cancelCallBackCheckTask(){
         if(mHandler!=null && mRunnable!=null){
+            Furahitech.currentRetryCount=0;
             mHandler.removeCallbacksAndMessages(null);
         }
     }
