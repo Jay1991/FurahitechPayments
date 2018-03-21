@@ -349,20 +349,19 @@ public class FurahitechMobilePresenterImpl implements RedirectionListener,Furahi
     private CallBackListener paymentCallBackListener=new CallBackListener() {
 
         @Override
-        public void onReceived(boolean isSuccess, final ModelPartial partialCheck) {
+        public void onReceived(boolean isSuccess, final ModelPartial partialCheckStatus) {
             if(mobileView!=null){
                 //Check if callback was received and proceed with transaction status reporting
-                if(partialCheck.getCallback().toLowerCase().equals(STATE_RECEIVED.toLowerCase()) && isExecuting()){
+                if(partialCheckStatus.getCallback().toLowerCase().equals(STATE_RECEIVED.toLowerCase()) && isExecuting()){
                     cancelCallBackCheckTask();
                     mobileView.showSnackView(activity.getString(R.string.payment_message_completed),false);
                     PaymentRequest request=FurahitechPay.getInstance().getPaymentRequest();
                     PaymentStatus status=new PaymentStatus();
-                    String amount=String.valueOf(request.getTransactionAmount());
-                    status.setPaymentAmount(Integer.parseInt(amount.substring(0,amount.length()-2)));
+                    status.setPaymentAmount(request.getTransactionAmount());
                     status.setPaymentCustomerId(request.getCustomerEmailAddress());
-                    status.setPaymentRefId(partialCheck.getRefuid());
-                    status.setPaymentStatus(partialCheck.getStatus().equals(RECEIVED) ? STATUS_SUCCESS :  (partialCheck.getStatus().equals(TIMEOUT) ? STATUS_TIMEOUT:STATUS_FAILURE));
-                    status.setPaymentTimeStamp(Integer.parseInt(partialCheck.getCallbackTimestamp()));
+                    status.setPaymentRefId(partialCheckStatus.getRefuid());
+                    status.setPaymentStatus(partialCheckStatus.getStatus().equals(RECEIVED) ? STATUS_SUCCESS :  (partialCheckStatus.getStatus().equals(TIMEOUT) ? STATUS_TIMEOUT:STATUS_FAILURE));
+                    status.setPaymentTimeStamp(Integer.parseInt(partialCheckStatus.getCallbackTimestamp()));
                     status.setPaymentRiskLevel("normal");
                     status.setPaymentGateWay(selectedMNO);
                     logEvent(false,currentGateWay,"Payment with "+getGateWayMNO()+" completed: status "+status.isPaidSuccessfully());
@@ -371,11 +370,11 @@ public class FurahitechMobilePresenterImpl implements RedirectionListener,Furahi
                     final String message="Checking status from "+selectedMNO+", processing..."+((currentRetryCount)*25)+"%";
                     if(currentRetryCount > CALLBACK_CHECK_MAX_RETRY_COUNT && isExecuting()){
                         logEvent(false,currentGateWay,"Terminate process after time-out");
-                        partialCheck.setCallbackTimestamp(String.valueOf(new Date().getTime()/1000));
-                        partialCheck.setRefuid(currentUID);
-                        partialCheck.setStatus(TIMEOUT);
-                        partialCheck.setCallback(STATE_RECEIVED);
-                        onReceived(true,partialCheck);
+                        partialCheckStatus.setCallbackTimestamp(String.valueOf(new Date().getTime()/1000));
+                        partialCheckStatus.setRefuid(currentUID);
+                        partialCheckStatus.setStatus(TIMEOUT);
+                        partialCheckStatus.setCallback(STATE_RECEIVED);
+                        onReceived(true,partialCheckStatus);
                     }else{
                         if(isExecuting()){
                             mobileView.showSnackView(message,true);

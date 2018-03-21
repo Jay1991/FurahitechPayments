@@ -55,7 +55,7 @@ import static com.furahitechstudio.furahitechpay.utils.Furahitech.PaymentConstan
  *
  */
 public class FurahitechResponseDialog extends DialogFragment{
-    private DialogClickListener listener;
+    private DialogClickListener clickListener;
 
     /**
      * Instantiate FurahitechResponseDialog as singleton
@@ -71,6 +71,10 @@ public class FurahitechResponseDialog extends DialogFragment{
        return ratingDialog;
     }
 
+    public void setClickListener(DialogClickListener clickListener){
+        this.clickListener=clickListener;
+    }
+
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -79,31 +83,31 @@ public class FurahitechResponseDialog extends DialogFragment{
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_response_dialog, container, false);
         TextView paymentMemo = view.findViewById(R.id.paymentMemo);
-        TextView paymentStatus = view.findViewById(R.id.paymentStatus);
+        TextView statusText = view.findViewById(R.id.paymentStatus);
         ImageView paymentStatusIcon = view.findViewById(R.id.paymentStatusIcon);
         Button closeDialog = view.findViewById(R.id.closeDialog);
         FrameLayout paymentStatusHolder = view.findViewById(R.id.paymentStatusHolder);
 
         //Setting up payment status views from status itself
-        final PaymentStatus status= (PaymentStatus) getArguments().getSerializable(PAYMENT_REDIRECTION_PARAM);
+        final PaymentStatus paymentStatus= (PaymentStatus) getArguments().getSerializable(PAYMENT_REDIRECTION_PARAM);
 
-        if(status!=null){
-            boolean isPaidSuccessfully= status.getPaymentStatus() == STATUS_SUCCESS;
+        if(paymentStatus!=null && clickListener !=null){
+            boolean isPaidSuccessfully= paymentStatus.getPaymentStatus() == STATUS_SUCCESS;
             int paymentStatusColors= ContextCompat.getColor(getActivity(), isPaidSuccessfully ? R.color.colorSuccess
-                    : status.getPaymentStatus() == STATUS_TIMEOUT ? android.R.color.black:
+                    : paymentStatus.getPaymentStatus() == STATUS_TIMEOUT ? android.R.color.black:
                     R.color.colorError);
-            status.setPaymentExtraParam(FurahitechPay.getInstance().getPaymentRequest().getPaymentExtraParam());
-            int paymentStatusIconsRes= isPaidSuccessfully ? R.drawable.ic_check_white_24dp: status.getPaymentStatus() == STATUS_TIMEOUT
+            paymentStatus.setPaymentExtraParam(FurahitechPay.getInstance().getPaymentRequest().getPaymentExtraParam());
+            int paymentStatusIconsRes= isPaidSuccessfully ? R.drawable.ic_check_white_24dp: paymentStatus.getPaymentStatus() == STATUS_TIMEOUT
                     ? R.drawable.ic_timer_off_white_24dp:R.drawable.ic_close_white_24dp;
-            String paymentStatusLabel= isPaidSuccessfully ? "Success": status.getPaymentStatus() == STATUS_TIMEOUT ? "Timeout":"Failure";
-            String message= status.getPaymentStatus() == STATUS_CANCELLED ? "We are sorry, it seems you have cancelled your payment task.Try next time."
-                    : isPaidSuccessfully ? "Thank you for using our services, we have successfully received your payment."
-                    : status.getPaymentStatus() == STATUS_TIMEOUT ? "Sorry, your payment process was timed out. If it was a success please contact us."
-                    :"We are sorry, we didn't receive your payment.Please try again later.";
+            String paymentStatusLabel= isPaidSuccessfully ? "Success": paymentStatus.getPaymentStatus() == STATUS_TIMEOUT ? "Timeout":"Failure";
+            String message= paymentStatus.getPaymentStatus() == STATUS_CANCELLED ? getString(R.string.payment_cancelled)
+                    : isPaidSuccessfully ? getString(R.string.payment_received)
+                    : paymentStatus.getPaymentStatus() == STATUS_TIMEOUT ? getString(R.string.payment_timed_out)
+                    :getString(R.string.no_payment_received);
 
             //Setting data to the views and holders
             paymentMemo.setText(message);
-            paymentStatus.setText(paymentStatusLabel);
+            statusText.setText(paymentStatusLabel);
             paymentStatusIcon.setImageResource(paymentStatusIconsRes);
             GradientDrawable bgShape = (GradientDrawable)paymentStatusHolder.getBackground();
             bgShape.setColor(paymentStatusColors);
@@ -113,7 +117,7 @@ public class FurahitechResponseDialog extends DialogFragment{
                 @Override
                 public void onClick(View view) {
                     dismiss();
-                    listener.onClose(status);
+                    clickListener.onClose(paymentStatus);
                 }
             });
         }else{
@@ -122,17 +126,7 @@ public class FurahitechResponseDialog extends DialogFragment{
 
         return view;
     }
-
-    /**
-     * Attach listener when dialog is attached to the activity
-     * @param context Application context
-     */
-    @Override
-    public void onAttach(Context context) {
-        listener= (DialogClickListener) getActivity();
-        super.onAttach(context);
-    }
-
+    
     /**
      * Setting up extra dialog views details on resiming it
      */

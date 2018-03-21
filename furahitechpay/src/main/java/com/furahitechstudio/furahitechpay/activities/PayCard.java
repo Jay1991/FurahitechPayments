@@ -253,7 +253,9 @@ public class PayCard extends AppCompatActivity implements FurahitechCardView,Dia
         presenter.setIsExecuting(false);
         showSnackMessage(coordinator,getString(R.string.payment_message_completed),false);
         android.app.FragmentManager fm = getFragmentManager();
-        new FurahitechResponseDialog().getInstance(status).show(fm, "fragment_alert");
+        FurahitechResponseDialog fragment=new FurahitechResponseDialog().getInstance(status);
+        fragment.setClickListener(this);
+        fragment.show(fm, "fragment_alert");
     }
 
     /**

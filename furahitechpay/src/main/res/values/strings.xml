@@ -38,4 +38,8 @@
     <string name="empty_mobile_details">Fill out your mobile number first</string>
     <string name="token_acquisition_failed">Access token acquisition process failed</string>
     <string name="something_went_wrong">Something went wrong, try again or contact us</string>
+    <string name="no_payment_received">We are sorry, we didn\'t receive your payment.Please try again later.</string>
+    <string name="payment_timed_out">Sorry, your payment process was timed out. If it was a success please contact us.</string>
+    <string name="payment_received">Thank you for using our services, we have successfully received your payment.</string>
+    <string name="payment_cancelled">We are sorry, it seems you have cancelled your payment task.Try next time.</string>
 </resources>

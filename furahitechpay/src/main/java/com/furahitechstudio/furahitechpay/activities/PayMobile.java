@@ -188,12 +188,14 @@ public class PayMobile extends AppCompatActivity implements FurahitechMobileView
     }
 
     @Override
-    public void onPaymentCompleted(PaymentStatus paymentStatus) {
+    public void onPaymentCompleted(PaymentStatus status) {
         if(!isFinishing()){
             presenter.setIsExecuting(false);
             showSnackMessage(coordinator,getString(R.string.payment_message_completed),false);
             android.app.FragmentManager fm = getFragmentManager();
-            new FurahitechResponseDialog().getInstance(paymentStatus).show(fm, "fragment_alert");
+            FurahitechResponseDialog fragment=new FurahitechResponseDialog().getInstance(status);
+            fragment.setClickListener(this);
+            fragment.show(fm, "fragment_alert");
         }
     }
 
