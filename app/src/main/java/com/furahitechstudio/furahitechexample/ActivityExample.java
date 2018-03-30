@@ -65,7 +65,6 @@ public class ActivityExample extends AppCompatActivity {
         FurahitechPay.getInstance()
                 .with(this)
                 .setPaymentRequest(request)
-                .setPaymentEnvironment(SANDBOX)
                 .setPaymentMode(MODE_MOBILE)
                 .setSupportedGateway(GATEWAY_MPESA,GATEWAY_TIGOPESA)
                 .setPaymentEnvironment(LIVE).request();

@@ -101,7 +101,6 @@ Initialize payment request (Tigo Pesa):
  FurahitechPay.getInstance()
                  .with(this)
                  .setPaymentRequest(request)
-                 .setPaymentEnvironment(SANDBOX)
                  .setPaymentMode(MODE_MOBILE)
                  .setSupportedGateway(GATEWAY_TIGOPESA)
                  .setPaymentEnvironment(LIVE).request();
@@ -135,7 +134,6 @@ Initialize payment request (M-Pesa):
  FurahitechPay.getInstance()
                  .with(this)
                  .setPaymentRequest(request)
-                 .setPaymentEnvironment(SANDBOX)
                  .setPaymentMode(MODE_MOBILE)
                  .setSupportedGateway(GATEWAY_MPESA)
                  .setPaymentEnvironment(LIVE).request();
